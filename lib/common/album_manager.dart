@@ -1,7 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
+import 'package:photoprism/api/api.dart';
 import 'package:photoprism/common/photo_manager.dart';
 import 'package:photoprism/common/photoprism_common_helper.dart';
-import 'package:photoprism/api/api.dart';
 import 'package:photoprism/model/album.dart';
 import 'package:photoprism/model/photo.dart';
 import 'package:photoprism/model/photoprism_model.dart';
@@ -30,7 +31,8 @@ class AlbumManager {
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
 
     print('Adding photos to album ' + model.albums[albumId].id);
-    model.photoprismLoadingScreen.showLoadingScreen('Adding photos to album..');
+    model.photoprismLoadingScreen
+        .showLoadingScreen('Adding photos to album...'.tr());
     final int status =
         await Api.addPhotosToAlbum(model.albums[albumId].id, photoUUIDs, model);
 
@@ -40,10 +42,11 @@ class AlbumManager {
       await PhotoManager.saveAndSetPhotos(context, <int, Photo>{}, albumId);
       await model.photoprismLoadingScreen.hideLoadingScreen();
       model.photoprismMessage
-          .showMessage('Adding photos to album successfull.');
+          .showMessage('Adding photos to album successfull.'.tr());
     } else {
       await model.photoprismLoadingScreen.hideLoadingScreen();
-      model.photoprismMessage.showMessage('Adding photos to album failed.');
+      model.photoprismMessage
+          .showMessage('Adding photos to album failed.'.tr());
     }
   }
 

@@ -1,22 +1,32 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:photoprism/common/hexcolor.dart';
+import 'package:photoprism/gen/codegen_loader.g.dart';
+import 'package:photoprism/model/photoprism_model.dart';
 import 'package:photoprism/pages/albums_page.dart';
+import 'package:photoprism/pages/photos_page.dart';
 import 'package:photoprism/pages/settings_page.dart';
 import 'package:provider/provider.dart';
-import 'package:photoprism/common/hexcolor.dart';
-import 'package:photoprism/pages/photos_page.dart';
-import 'package:photoprism/model/photoprism_model.dart';
 // use this for debugging animations
 // import 'package:flutter/scheduler.dart' show timeDilation;
 
 void main() {
   // use this for debugging animations
   // timeDilation = 10.0;
-  runApp(
-    ChangeNotifierProvider<PhotoprismModel>(
+  runApp(EasyLocalization(
+    child: ChangeNotifierProvider<PhotoprismModel>(
       create: (BuildContext context) => PhotoprismModel(),
       child: PhotoprismApp(),
     ),
-  );
+    supportedLocales: const <Locale>[
+      Locale('en'),
+      Locale('de'),
+      Locale('nl'),
+      Locale('ru'),
+    ],
+    assetLoader: CodegenLoader,
+    path: 'assets/lang',
+  ));
 }
 
 class PhotoprismApp extends StatelessWidget {
@@ -41,6 +51,9 @@ class PhotoprismApp extends StatelessWidget {
                 borderSide: BorderSide(color: applicationColor))),
       ),
       home: MainPage(),
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
     );
   }
 }
@@ -74,18 +87,18 @@ class MainPage extends StatelessWidget {
           ],
           physics: const NeverScrollableScrollPhysics()),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.photo),
-            title: Text('Photos'),
+            title: const Text('Photos').tr(),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.photo_album),
-            title: Text('Albums'),
+            title: const Text('Albums').tr(),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            title: Text('Settings'),
+            title: const Text('Settings').tr(),
           ),
         ],
         currentIndex: model.selectedPageIndex,

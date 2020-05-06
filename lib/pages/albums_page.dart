@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:photoprism/api/api.dart';
 import 'package:photoprism/common/album_manager.dart';
@@ -20,18 +21,19 @@ class AlbumsPage extends StatelessWidget {
           model.albums[index].id +
           '/thumbnail/tile_500';
     } else {
+      //TODO: Make this use bundled assets instead of re-downloading
       return 'https://raw.githubusercontent.com/photoprism/photoprism-mobile/master/assets/emptyAlbum.jpg';
     }
   }
 
   Future<void> createAlbum(BuildContext context) async {
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
-    model.photoprismLoadingScreen.showLoadingScreen('Creating album...');
+    model.photoprismLoadingScreen.showLoadingScreen('Creating album...'.tr());
     final String uuid = await Api.createAlbum('New album', model);
 
     if (uuid == '-1') {
       await model.photoprismLoadingScreen.hideLoadingScreen();
-      model.photoprismMessage.showMessage('Creating album failed.');
+      model.photoprismMessage.showMessage('Creating album failed.'.tr());
     } else {
       await AlbumManager.loadAlbums(context, 0, forceReload: true);
       await model.photoprismLoadingScreen.hideLoadingScreen();
@@ -57,7 +59,7 @@ class AlbumsPage extends StatelessWidget {
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.add),
-              tooltip: 'Create album',
+              tooltip: 'Create album'.tr(),
               onPressed: () {
                 //model.photoprismAlbumManager.createAlbum();
                 createAlbum(context);

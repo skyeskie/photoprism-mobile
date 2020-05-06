@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -299,7 +300,7 @@ class _FullscreenPhotoGalleryState extends State<FullscreenPhotoGallery>
                           ),*/
                         IconButton(
                           icon: const Icon(Icons.share),
-                          tooltip: 'Share photo',
+                          tooltip: 'Share photo'.tr(),
                           onPressed: () {
                             sharePhoto(currentPhotoIndex, context);
                           },
@@ -318,7 +319,7 @@ class _FullscreenPhotoGalleryState extends State<FullscreenPhotoGallery>
         await Api.downloadPhoto(model, photos[index].fileHash);
 
     if (photoBytes != null) {
-      await Share.file('Photoprism Photo', photos[index].fileHash + '.jpg',
+      await Share.file('Photoprism Photo'.tr(), photos[index].fileHash + '.jpg',
           photoBytes, 'image/jpg');
     }
   }

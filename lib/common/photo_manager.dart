@@ -1,10 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/widgets.dart';
 import 'package:photoprism/api/api.dart';
+import 'package:photoprism/common/album_manager.dart';
 import 'package:photoprism/common/photoprism_common_helper.dart';
 import 'package:photoprism/model/moments_time.dart';
 import 'package:photoprism/model/photo.dart';
 import 'package:photoprism/model/photoprism_model.dart';
-import 'package:photoprism/common/album_manager.dart';
 import 'package:provider/provider.dart';
 
 class PhotoManager {
@@ -43,7 +44,7 @@ class PhotoManager {
       BuildContext context, List<String> photoUUIDs) async {
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
 
-    model.photoprismLoadingScreen.showLoadingScreen('Archive photos..');
+    model.photoprismLoadingScreen.showLoadingScreen('Archive photos..'.tr());
     final int status = await Api.archivePhotos(photoUUIDs, model);
     if (status == 0) {
       model.gridController.clear();
@@ -51,7 +52,7 @@ class PhotoManager {
       model.photoprismLoadingScreen.hideLoadingScreen();
     } else {
       model.photoprismLoadingScreen.hideLoadingScreen();
-      model.photoprismMessage.showMessage('Archiving photos failed.');
+      model.photoprismMessage.showMessage('Archiving photos failed.'.tr());
     }
   }
 
@@ -78,6 +79,7 @@ class PhotoManager {
     return 0;
   }
 
+  //TODO: refactor fix spelling to getCumulativeMonthCount
   static List<MomentsTime> getCummulativeMonthCount(BuildContext context) {
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
     final List<MomentsTime> cummulativeMonthCount = <MomentsTime>[];

@@ -1,14 +1,15 @@
 import 'package:collection/collection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:photo_manager/photo_manager.dart' as photolib;
 import 'package:photoprism/common/photoprism_uploader.dart';
 import 'package:photoprism/model/photoprism_model.dart';
+import 'package:photoprism/pages/auto_upload_queue.dart';
 import 'package:photoprism/widgets/auth_dialog.dart';
 import 'package:photoprism/widgets/multi_select_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:photo_manager/photo_manager.dart' as photolib;
-import 'package:photoprism/pages/auto_upload_queue.dart';
 
 class SettingsPage extends StatelessWidget {
   final TextEditingController _urlTextFieldController = TextEditingController();
@@ -38,7 +39,7 @@ class SettingsPage extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text('Authentication'),
+              title: const Text('Authentication').tr(),
               leading: Container(
                 width: 10,
                 alignment: Alignment.center,
@@ -51,7 +52,7 @@ class SettingsPage extends StatelessWidget {
                       )),
             ),
             ListTile(
-              title: const Text('Empty cache'),
+              title: const Text('Empty cache').tr(),
               leading: Container(
                 width: 10,
                 alignment: Alignment.center,
@@ -62,7 +63,7 @@ class SettingsPage extends StatelessWidget {
               },
             ),
             SwitchListTile(
-              title: const Text('Auto Upload'),
+              title: const Text('Auto Upload').tr(),
               secondary: const Icon(Icons.cloud_upload),
               value: model.autoUploadEnabled,
               onChanged: (bool newState) async {
@@ -75,7 +76,7 @@ class SettingsPage extends StatelessWidget {
                   }
                 } else {
                   model.photoprismMessage
-                      .showMessage('Permission to photo library denied!');
+                      .showMessage('Permission to photo library denied!'.tr());
                 }
               },
             ),
@@ -87,7 +88,7 @@ Use it at your own risk!
             ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Albums to upload'),
+                title: const Text('Albums to upload').tr(),
                 subtitle: _albumsToUploadText(),
                 leading: Container(
                   width: 10,
@@ -100,9 +101,10 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title:
-                    const Text('Last time checked for photos to be uploaded'),
-                subtitle: Text(model.autoUploadLastTimeCheckedForPhotos),
+                title: const Text('Last time checked for photos to be uploaded')
+                    .tr(),
+                //If 'Never', will translate. Number won't translate
+                subtitle: Text(model.autoUploadLastTimeCheckedForPhotos).tr(),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -111,7 +113,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Delete already uploaded photos info'),
+                title: const Text('Delete already uploaded photos info').tr(),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -123,7 +125,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Retry all failed uploads'),
+                title: const Text('Retry all failed uploads').tr(),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -135,7 +137,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Trigger auto upload manually'),
+                title: const Text('Trigger auto upload manually').tr(),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -147,7 +149,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Show upload queue'),
+                title: const Text('Show upload queue').tr(),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -160,13 +162,13 @@ Use it at your own risk!
                     MaterialPageRoute<void>(
                         builder: (BuildContext ctx) => FileList(model,
                             files: model.photosToUpload.toList(),
-                            title: 'Auto upload queue')),
+                            title: 'Auto upload queue'.tr())),
                   );
                 },
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Show uploaded photos list'),
+                title: const Text('Show uploaded photos list').tr(),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -179,13 +181,13 @@ Use it at your own risk!
                     MaterialPageRoute<void>(
                         builder: (BuildContext ctx) => FileList(model,
                             files: model.alreadyUploadedPhotos.toList(),
-                            title: 'Uploaded photos list')),
+                            title: 'Uploaded photos list'.tr())),
                   );
                 },
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Show failed uploads list'),
+                title: const Text('Show failed uploads list').tr(),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -198,7 +200,7 @@ Use it at your own risk!
                     MaterialPageRoute<void>(
                         builder: (BuildContext ctx) => FileList(model,
                             files: model.photosUploadFailed.toList(),
-                            title: 'Failed uploads list')),
+                            title: 'Failed uploads list'.tr())),
                   );
                 },
               ),
@@ -219,7 +221,7 @@ Use it at your own risk!
 
     if (!await photolib.PhotoManager.requestPermission()) {
       model.photoprismMessage
-          .showMessage('Permission to photo library denied!');
+          .showMessage('Permission to photo library denied!'.tr());
       return;
     }
 
@@ -236,7 +238,7 @@ Use it at your own risk!
                 .toList(),
             subtitles: assets
                 .map((photolib.AssetPathEntity asset) =>
-                    '${asset.assetCount} Elements')
+                    '{} Elements'.plural(asset.assetCount))
                 .toList(),
             ids: assets
                 .map((photolib.AssetPathEntity asset) => asset.id)
@@ -261,7 +263,7 @@ Use it at your own risk!
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Enter Photoprism URL'),
+            title: const Text('Enter Photoprism URL').tr(),
             content: TextField(
               key: const ValueKey<String>('photoprismUrlTextField'),
               controller: _urlTextFieldController,
@@ -270,13 +272,13 @@ Use it at your own risk!
             ),
             actions: <Widget>[
               FlatButton(
-                child: const Text('Cancel'),
+                child: const Text('Cancel').tr(),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               FlatButton(
-                child: const Text('Save'),
+                child: const Text('Save').tr(),
                 onPressed: () {
                   setNewPhotoprismUrl(context, _urlTextFieldController.text);
                 },
@@ -326,6 +328,7 @@ Use it at your own risk!
           }
         }
         if (selectedAlbums.isEmpty) {
+          //TODO: Translate as-is? Use "No albums found"?
           return const Text('none');
         }
         return Text(selectedAlbums.substring(0, selectedAlbums.length - 2));

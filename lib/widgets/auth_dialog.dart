@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:photoprism/model/photoprism_model.dart';
@@ -48,7 +49,7 @@ class _AuthDialogState extends State<AuthDialog> {
     _passwordController.text = model.photoprismAuth.password;
 
     return AlertDialog(
-      title: const Text('Authentication'),
+      title: const Text('Authentication').tr(),
       content: SingleChildScrollView(
           child: ListBody(
         children: <Widget>[
@@ -64,7 +65,7 @@ class _AuthDialogState extends State<AuthDialog> {
           Visibility(
               visible: enabled,
               child: ListTile(
-                  subtitle: const Text('password'),
+                  subtitle: const Text('Password').tr(),
                   title: TextField(
                     key: const ValueKey<String>('password'),
                     controller: _passwordController,
@@ -72,7 +73,7 @@ class _AuthDialogState extends State<AuthDialog> {
                     obscureText: true,
                   ))),
           SwitchListTile(
-            title: const Text('HTTP Basic'),
+            title: const Text('HTTP Basic').tr(),
             onChanged: (bool value) {
               setState(() {
                 httpBasicEnabled = value;
@@ -83,7 +84,7 @@ class _AuthDialogState extends State<AuthDialog> {
           Visibility(
               visible: httpBasicEnabled,
               child: ListTile(
-                  subtitle: const Text('HTTP basic user'),
+                  subtitle: const Text('HTTP basic user').tr(),
                   title: TextField(
                     key: const ValueKey<String>('httpBasicUserTextField'),
                     controller: _httpBasicUserController,
@@ -92,7 +93,7 @@ class _AuthDialogState extends State<AuthDialog> {
           Visibility(
               visible: httpBasicEnabled,
               child: ListTile(
-                  subtitle: const Text('HTTP basic password'),
+                  subtitle: const Text('HTTP basic password').tr(),
                   title: TextField(
                     key: const ValueKey<String>('httpBasicPasswordTextField'),
                     controller: _httpBasicPasswordController,
@@ -103,13 +104,13 @@ class _AuthDialogState extends State<AuthDialog> {
       )),
       actions: <Widget>[
         FlatButton(
-          child: const Text('Cancel'),
+          child: const Text('Cancel').tr(),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         FlatButton(
-          child: const Text('Save'),
+          child: const Text('Save').tr(),
           onPressed: () => saveAndPop(),
         )
       ],

@@ -3,21 +3,22 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:background_fetch/background_fetch.dart';
 import 'package:crypto/crypto.dart';
 import 'package:device_info/device_info.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_uploader/flutter_uploader.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:photo_manager/photo_manager.dart' as photolib;
+import 'package:photoprism/api/api.dart';
 import 'package:photoprism/common/photo_manager.dart';
 import 'package:photoprism/model/album.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path/path.dart';
-import 'package:background_fetch/background_fetch.dart';
-import 'package:photoprism/api/api.dart';
 import 'package:photoprism/model/photoprism_model.dart';
-import 'package:photo_manager/photo_manager.dart' as photolib;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PhotoprismUploader {
   PhotoprismUploader(this.photoprismModel) {
@@ -82,10 +83,11 @@ class PhotoprismUploader {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     // get time
     final DateTime now = DateTime.now();
-    final String currentTime = DateFormat('dd.MM.yyyy – kk:mm').format(now);
-    print(currentTime.toString());
-    prefs.setString('autoUploadLastTimeActive', currentTime.toString());
-    photoprismModel.autoUploadLastTimeCheckedForPhotos = currentTime.toString();
+    final String currentTimeString =
+        DateFormat('dd.MM.yyyy – kk:mm').format(now);
+    print(currentTimeString);
+    prefs.setString('autoUploadLastTimeActive', currentTimeString);
+    photoprismModel.autoUploadLastTimeCheckedForPhotos = currentTimeString;
     photoprismModel.notify();
   }
 
@@ -114,10 +116,10 @@ class PhotoprismUploader {
 
       if (files.length > 1) {
         photoprismModel.photoprismLoadingScreen
-            .showLoadingScreen('Uploading photos..');
+            .showLoadingScreen('Uploading photos...'.tr());
       } else {
         photoprismModel.photoprismLoadingScreen
-            .showLoadingScreen('Uploading photo..');
+            .showLoadingScreen('Uploading photo...'.tr());
       }
 
       final Random rng = Random.secure();
@@ -134,26 +136,28 @@ class PhotoprismUploader {
         print('Manual upload successful.');
         print('Importing photos..');
         photoprismModel.photoprismLoadingScreen
-            .updateLoadingScreen('Importing photos..');
+            .updateLoadingScreen('Importing photos...'.tr());
         final int status = await Api.importPhotoEvent(photoprismModel, event);
 
         if (status == 0) {
           await PhotoManager.loadMomentsTime(context, forceReload: true);
           await photoprismModel.photoprismLoadingScreen.hideLoadingScreen();
           photoprismModel.photoprismMessage
-              .showMessage('Uploading and importing successful.');
+              .showMessage('Uploading and importing successful.'.tr());
         } else if (status == 3) {
           await photoprismModel.photoprismLoadingScreen.hideLoadingScreen();
           photoprismModel.photoprismMessage
-              .showMessage('Photo already imported or import failed.');
+              .showMessage('Photo already imported or import failed.'.tr());
         } else {
           await photoprismModel.photoprismLoadingScreen.hideLoadingScreen();
-          photoprismModel.photoprismMessage.showMessage('Importing failed.');
+          photoprismModel.photoprismMessage
+              .showMessage('Importing failed.'.tr());
         }
       } else {
         print('Manual upload failed.');
         await photoprismModel.photoprismLoadingScreen.hideLoadingScreen();
-        photoprismModel.photoprismMessage.showMessage('Manual upload failed.');
+        photoprismModel.photoprismMessage
+            .showMessage('Manual upload failed.'.tr());
       }
     }
   }

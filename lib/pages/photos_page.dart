@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:drag_select_grid_view/drag_select_grid_view.dart';
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -11,7 +13,6 @@ import 'package:photoprism/common/transparent_route.dart';
 import 'package:photoprism/model/moments_time.dart';
 import 'package:photoprism/model/photoprism_model.dart';
 import 'package:photoprism/pages/photoview.dart';
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:photoprism/widgets/selectable_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +58,7 @@ class PhotosPage extends StatelessWidget {
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
     final Map<String, List<int>> photos = <String, List<int>>{};
     model.photoprismLoadingScreen
-        .showLoadingScreen('Preparing photos for sharing...');
+        .showLoadingScreen('Preparing photos for sharing...'.tr());
     for (final int index in model.gridController.selection.selectedIndexes) {
       final List<int> bytes =
           await Api.downloadPhoto(model, model.photos[index].fileHash);
@@ -68,7 +69,7 @@ class PhotosPage extends StatelessWidget {
       photos[model.photos[index].fileHash + '.jpg'] = bytes;
     }
     model.photoprismLoadingScreen.hideLoadingScreen();
-    Share.files('Photoprism Photos', photos, 'image/jpg');
+    Share.files('Photoprism Photos'.tr(), photos, 'image/jpg');
   }
 
   static Future<void> addPhotosToAlbum(
@@ -141,21 +142,21 @@ class PhotosPage extends StatelessWidget {
           ? <Widget>[
               IconButton(
                 icon: const Icon(Icons.archive),
-                tooltip: 'Archive photos',
+                tooltip: 'Archive photos'.tr(),
                 onPressed: () {
                   archiveSelectedPhotos(context);
                 },
               ),
               IconButton(
                 icon: const Icon(Icons.add),
-                tooltip: 'Add to album',
+                tooltip: 'Add to album'.tr(),
                 onPressed: () {
                   _selectAlbumBottomSheet(context);
                 },
               ),
               IconButton(
                 icon: const Icon(Icons.share),
-                tooltip: 'Share photos',
+                tooltip: 'Share photos'.tr(),
                 onPressed: () {
                   _sharePhotos(context);
                 },
@@ -164,9 +165,9 @@ class PhotosPage extends StatelessWidget {
           : <Widget>[
               PopupMenuButton<int>(
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                  const PopupMenuItem<int>(
+                  PopupMenuItem<int>(
                     value: 0,
-                    child: Text('Upload photo'),
+                    child: const Text('Upload photo').tr(),
                   )
                 ],
                 onSelected: (int choice) {

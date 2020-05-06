@@ -1,10 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:photoprism/api/api.dart';
 import 'package:photoprism/common/album_manager.dart';
 import 'package:photoprism/common/photo_manager.dart';
-import 'package:photoprism/api/api.dart';
-import 'package:photoprism/pages/photos_page.dart';
 import 'package:photoprism/model/album.dart';
 import 'package:photoprism/model/photoprism_model.dart';
+import 'package:photoprism/pages/photos_page.dart';
 import 'package:provider/provider.dart';
 
 class AlbumDetailView extends StatelessWidget {
@@ -18,7 +19,7 @@ class AlbumDetailView extends StatelessWidget {
   final TextEditingController _renameAlbumTextFieldController;
 
   Future<void> _renameAlbum(BuildContext context) async {
-    _model.photoprismLoadingScreen.showLoadingScreen('Renaming album...');
+    _model.photoprismLoadingScreen.showLoadingScreen('Renaming album...'.tr());
 
     // rename remote album
     final int status = await Api.renameAlbum(
@@ -32,12 +33,12 @@ class AlbumDetailView extends StatelessWidget {
 
     // check renaming success
     if (status != 0) {
-      _model.photoprismMessage.showMessage('Renaming album failed.');
+      _model.photoprismMessage.showMessage('Renaming album failed.'.tr());
     }
   }
 
   Future<void> _deleteAlbum(BuildContext context) async {
-    _model.photoprismLoadingScreen.showLoadingScreen('Deleting album...');
+    _model.photoprismLoadingScreen.showLoadingScreen('Deleting album...'.tr());
 
     // delete remote album
     final int status = await Api.deleteAlbum(_album.id, _model);
@@ -48,7 +49,7 @@ class AlbumDetailView extends StatelessWidget {
     Navigator.pop(context);
     // check if successful
     if (status != 0) {
-      _model.photoprismMessage.showMessage('Deleting album failed.');
+      _model.photoprismMessage.showMessage('Deleting album failed.'.tr());
     } else {
       // go back to albums view
       await AlbumManager.loadAlbums(context, 0, forceReload: true);
@@ -57,7 +58,7 @@ class AlbumDetailView extends StatelessWidget {
   }
 
   Future<void> _removePhotosFromAlbum(BuildContext context) async {
-    _model.photoprismLoadingScreen.showLoadingScreen('Removing photos...');
+    _model.photoprismLoadingScreen.showLoadingScreen('Removing photos...'.tr());
 
     // save all selected photos in list
     final List<String> selectedPhotos = <String>[];
@@ -73,7 +74,7 @@ class AlbumDetailView extends StatelessWidget {
     // check if successful
     if (status != 0) {
       _model.photoprismMessage
-          .showMessage('Removing photos from album failed.');
+          .showMessage('Removing photos from album failed.'.tr());
     } else {
       AlbumManager.loadAlbums(context, 0,
           forceReload: true, loadPhotosForAlbumId: _albumId);
@@ -112,9 +113,9 @@ class AlbumDetailView extends StatelessWidget {
                       PopupMenuButton<int>(
                         itemBuilder: (BuildContext context) =>
                             <PopupMenuEntry<int>>[
-                          const PopupMenuItem<int>(
+                          PopupMenuItem<int>(
                             value: 2,
-                            child: Text('Remove from album'),
+                            child: const Text('Remove from album').tr(),
                           ),
                         ],
                         onSelected: (int choice) {
@@ -127,13 +128,13 @@ class AlbumDetailView extends StatelessWidget {
                       PopupMenuButton<int>(
                         itemBuilder: (BuildContext context) =>
                             <PopupMenuEntry<int>>[
-                          const PopupMenuItem<int>(
+                          PopupMenuItem<int>(
                             value: 0,
-                            child: Text('Rename album'),
+                            child: const Text('Rename album').tr(),
                           ),
-                          const PopupMenuItem<int>(
+                          PopupMenuItem<int>(
                             value: 1,
-                            child: Text('Delete album'),
+                            child: const Text('Delete album').tr(),
                           ),
                         ],
                         onSelected: (int choice) {
@@ -158,19 +159,19 @@ class AlbumDetailView extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Rename album'),
+            title: const Text('Rename album').tr(),
             content: TextField(
               controller: _renameAlbumTextFieldController,
             ),
             actions: <Widget>[
               FlatButton(
-                child: const Text('Cancel'),
+                child: const Text('Cancel').tr(),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
               FlatButton(
-                child: const Text('Rename album'),
+                child: const Text('Rename album').tr(),
                 onPressed: () {
                   _renameAlbum(context);
                 },
@@ -185,18 +186,18 @@ class AlbumDetailView extends StatelessWidget {
         context: albumContext,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Delete album?'),
-            content: const Text(
-                'Are you sure you want to delete this album? Your photos will not be deleted.'),
+            title: const Text('Delete album?').tr(),
+            content: Text('Are you sure you want to delete this album?'.tr() +
+                'Your photos will not be deleted.'.tr()),
             actions: <Widget>[
               FlatButton(
-                child: const Text('Cancel'),
+                child: const Text('Cancel').tr(),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
               FlatButton(
-                child: const Text('Delete album'),
+                child: const Text('Delete album').tr(),
                 onPressed: () {
                   _deleteAlbum(albumContext);
                 },
