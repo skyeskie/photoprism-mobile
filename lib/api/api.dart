@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:photoprism/generated/l10n.dart';
 import 'package:photoprism/model/album.dart';
 import 'package:photoprism/model/moments_time.dart';
 import 'package:photoprism/model/photo.dart';
 import 'package:photoprism/model/photoprism_model.dart';
 import 'package:provider/provider.dart';
-import 'package:http_parser/http_parser.dart';
 
 class Api {
   static Future<dynamic> httpAuth(PhotoprismModel model, Function call) async {
@@ -367,8 +368,8 @@ class Api {
     if (response.statusCode == 200) {
       return response.bodyBytes;
     } else {
-      model.photoprismMessage
-          .showMessage('Error while sharing: No connection to server!');
+      model.photoprismMessage.showMessage(
+          S.of(model.photoprismLoadingScreen.context).errorNoConnection);
     }
     return null;
   }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photoprism/api/api.dart';
 import 'package:photoprism/common/photo_manager.dart';
+import 'package:photoprism/generated/l10n.dart';
 import 'package:photoprism/model/photo.dart';
 import 'package:provider/provider.dart';
 
@@ -299,7 +300,7 @@ class _FullscreenPhotoGalleryState extends State<FullscreenPhotoGallery>
                           ),*/
                         IconButton(
                           icon: const Icon(Icons.share),
-                          tooltip: 'Share photo',
+                          tooltip: S.of(context).sharePhoto,
                           onPressed: () {
                             sharePhoto(currentPhotoIndex, context);
                           },
@@ -318,8 +319,8 @@ class _FullscreenPhotoGalleryState extends State<FullscreenPhotoGallery>
         await Api.downloadPhoto(model, photos[index].fileHash);
 
     if (photoBytes != null) {
-      await Share.file('Photoprism Photo', photos[index].fileHash + '.jpg',
-          photoBytes, 'image/jpg');
+      await Share.file(S.of(context).photoprismPhoto,
+          photos[index].fileHash + '.jpg', photoBytes, 'image/jpg');
     }
   }
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:photoprism/api/api.dart';
+import 'package:photoprism/common/album_manager.dart';
 import 'package:photoprism/common/photoprism_common_helper.dart';
+import 'package:photoprism/generated/l10n.dart';
 import 'package:photoprism/model/moments_time.dart';
 import 'package:photoprism/model/photo.dart';
 import 'package:photoprism/model/photoprism_model.dart';
-import 'package:photoprism/common/album_manager.dart';
 import 'package:provider/provider.dart';
 
 class PhotoManager {
@@ -43,7 +44,8 @@ class PhotoManager {
       BuildContext context, List<String> photoUUIDs) async {
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
 
-    model.photoprismLoadingScreen.showLoadingScreen('Archive photos..');
+    model.photoprismLoadingScreen.showLoadingScreen(
+        S.of(model.photoprismLoadingScreen.context).archivePhotos);
     final int status = await Api.archivePhotos(photoUUIDs, model);
     if (status == 0) {
       model.gridController.clear();
@@ -51,7 +53,8 @@ class PhotoManager {
       model.photoprismLoadingScreen.hideLoadingScreen();
     } else {
       model.photoprismLoadingScreen.hideLoadingScreen();
-      model.photoprismMessage.showMessage('Archiving photos failed.');
+      model.photoprismMessage.showMessage(
+          S.of(model.photoprismLoadingScreen.context).archivingPhotosFailed);
     }
   }
 

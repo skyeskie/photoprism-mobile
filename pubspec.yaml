@@ -47,6 +47,8 @@ dependencies:
   draggable_scrollbar:
     git:
       url: git://github.com/thielepaul/flutter-draggable-scrollbar.git
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -100,3 +102,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_intl:
+  enabled: true

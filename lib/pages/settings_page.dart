@@ -1,14 +1,15 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:photo_manager/photo_manager.dart' as photolib;
 import 'package:photoprism/common/photoprism_uploader.dart';
+import 'package:photoprism/generated/l10n.dart';
 import 'package:photoprism/model/photoprism_model.dart';
+import 'package:photoprism/pages/auto_upload_queue.dart';
 import 'package:photoprism/widgets/auth_dialog.dart';
 import 'package:photoprism/widgets/multi_select_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:photo_manager/photo_manager.dart' as photolib;
-import 'package:photoprism/pages/auto_upload_queue.dart';
 
 class SettingsPage extends StatelessWidget {
   final TextEditingController _urlTextFieldController = TextEditingController();
@@ -26,7 +27,7 @@ class SettingsPage extends StatelessWidget {
             child: ListView(
           children: <Widget>[
             ListTile(
-              title: const Text('Photoprism URL'),
+              title: Text(S.of(context).photoprismUrl),
               subtitle: Text(model.photoprismUrl),
               leading: Container(
                 width: 10,
@@ -38,7 +39,7 @@ class SettingsPage extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text('Authentication'),
+              title: Text(S.of(context).authentication),
               leading: Container(
                 width: 10,
                 alignment: Alignment.center,
@@ -51,7 +52,7 @@ class SettingsPage extends StatelessWidget {
                       )),
             ),
             ListTile(
-              title: const Text('Empty cache'),
+              title: Text(S.of(context).emptyCache),
               leading: Container(
                 width: 10,
                 alignment: Alignment.center,
@@ -62,7 +63,7 @@ class SettingsPage extends StatelessWidget {
               },
             ),
             SwitchListTile(
-              title: const Text('Auto Upload'),
+              title: Text(S.of(context).autoUpload),
               secondary: const Icon(Icons.cloud_upload),
               value: model.autoUploadEnabled,
               onChanged: (bool newState) async {
@@ -74,20 +75,18 @@ class SettingsPage extends StatelessWidget {
                     configureAlbumsToUpload(context);
                   }
                 } else {
-                  model.photoprismMessage
-                      .showMessage('Permission to photo library denied!');
+                  model.photoprismMessage.showMessage(S
+                      .of(model.photoprismLoadingScreen.context)
+                      .permissionToPhotoLibraryDenied);
                 }
               },
             ),
-            const ListTile(
-              title: Text('''
-Warning: Auto upload is still under development.
-Use it at your own risk!
-                  '''),
+            ListTile(
+              title: Text(S.of(context).autoUploadLongWarning),
             ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Albums to upload'),
+                title: Text(S.of(context).albumsToUpload),
                 subtitle: _albumsToUploadText(),
                 leading: Container(
                   width: 10,
@@ -100,8 +99,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title:
-                    const Text('Last time checked for photos to be uploaded'),
+                title: Text(S.of(context).lastTimeCheckedForPhotosToBeUploaded),
                 subtitle: Text(model.autoUploadLastTimeCheckedForPhotos),
                 leading: Container(
                   width: 10,
@@ -111,7 +109,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Delete already uploaded photos info'),
+                title: Text(S.of(context).deleteAlreadyUploadedPhotosInfo),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -123,7 +121,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Retry all failed uploads'),
+                title: Text(S.of(context).retryAllFailedUploads),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -135,7 +133,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Trigger auto upload manually'),
+                title: Text(S.of(context).triggerAutoUploadManually),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -147,7 +145,7 @@ Use it at your own risk!
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Show upload queue'),
+                title: Text(S.of(context).showUploadQueue),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -160,13 +158,13 @@ Use it at your own risk!
                     MaterialPageRoute<void>(
                         builder: (BuildContext ctx) => FileList(model,
                             files: model.photosToUpload.toList(),
-                            title: 'Auto upload queue')),
+                            title: S.of(context).autoUploadQueue)),
                   );
                 },
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Show uploaded photos list'),
+                title: Text(S.of(context).showUploadedPhotosList),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -179,13 +177,13 @@ Use it at your own risk!
                     MaterialPageRoute<void>(
                         builder: (BuildContext ctx) => FileList(model,
                             files: model.alreadyUploadedPhotos.toList(),
-                            title: 'Uploaded photos list')),
+                            title: S.of(context).uploadedPhotosList)),
                   );
                 },
               ),
             if (model.autoUploadEnabled)
               ListTile(
-                title: const Text('Show failed uploads list'),
+                title: Text(S.of(context).showFailedUploadsList),
                 leading: Container(
                   width: 10,
                   alignment: Alignment.center,
@@ -198,7 +196,7 @@ Use it at your own risk!
                     MaterialPageRoute<void>(
                         builder: (BuildContext ctx) => FileList(model,
                             files: model.photosUploadFailed.toList(),
-                            title: 'Failed uploads list')),
+                            title: S.of(context).failedUploadsList)),
                   );
                 },
               ),
@@ -218,8 +216,9 @@ Use it at your own risk!
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
 
     if (!await photolib.PhotoManager.requestPermission()) {
-      model.photoprismMessage
-          .showMessage('Permission to photo library denied!');
+      model.photoprismMessage.showMessage(S
+          .of(model.photoprismLoadingScreen.context)
+          .permissionToPhotoLibraryDenied);
       return;
     }
 
@@ -236,7 +235,7 @@ Use it at your own risk!
                 .toList(),
             subtitles: assets
                 .map((photolib.AssetPathEntity asset) =>
-                    '${asset.assetCount} Elements')
+                    S.of(context).numberElements(asset.assetCount))
                 .toList(),
             ids: assets
                 .map((photolib.AssetPathEntity asset) => asset.id)
@@ -261,7 +260,7 @@ Use it at your own risk!
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Enter Photoprism URL'),
+            title: Text(S.of(context).enterPhotoprismUrl),
             content: TextField(
               key: const ValueKey<String>('photoprismUrlTextField'),
               controller: _urlTextFieldController,
@@ -270,13 +269,13 @@ Use it at your own risk!
             ),
             actions: <Widget>[
               FlatButton(
-                child: const Text('Cancel'),
+                child: Text(S.of(context).cancel),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               FlatButton(
-                child: const Text('Save'),
+                child: Text(S.of(context).save),
                 onPressed: () {
                   setNewPhotoprismUrl(context, _urlTextFieldController.text);
                 },
@@ -326,7 +325,7 @@ Use it at your own risk!
           }
         }
         if (selectedAlbums.isEmpty) {
-          return const Text('none');
+          return Text(S.of(context).none);
         }
         return Text(selectedAlbums.substring(0, selectedAlbums.length - 2));
       });

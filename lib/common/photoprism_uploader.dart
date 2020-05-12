@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:background_fetch/background_fetch.dart';
 import 'package:crypto/crypto.dart';
 import 'package:device_info/device_info.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,14 +11,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_uploader/flutter_uploader.dart';
 import 'package:intl/intl.dart';
-import 'package:photoprism/common/photo_manager.dart';
-import 'package:photoprism/model/album.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
-import 'package:background_fetch/background_fetch.dart';
-import 'package:photoprism/api/api.dart';
-import 'package:photoprism/model/photoprism_model.dart';
 import 'package:photo_manager/photo_manager.dart' as photolib;
+import 'package:photoprism/api/api.dart';
+import 'package:photoprism/common/photo_manager.dart';
+import 'package:photoprism/generated/l10n.dart';
+import 'package:photoprism/model/album.dart';
+import 'package:photoprism/model/photoprism_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PhotoprismUploader {
   PhotoprismUploader(this.photoprismModel) {
@@ -94,12 +95,15 @@ class PhotoprismUploader {
     photoprismModel.autoUploadEnabled =
         prefs.getBool('autoUploadEnabled') ?? false;
     photoprismModel.autoUploadLastTimeCheckedForPhotos =
-        prefs.getString('autoUploadLastTimeActive') ?? 'Never';
+        prefs.getString('autoUploadLastTimeActive') ??
+            S.of(photoprismModel.context).never;
     photoprismModel.notify();
   }
 
   /// Starts image file picker, uploads photo(s) and imports them.
   Future<void> selectPhotoAndUpload(BuildContext context) async {
+    final S loadingScreenS =
+        S.of(photoprismModel.photoprismLoadingScreen.context);
     final List<File> files = await FilePicker.getMultiFile();
 
     // list for flutter uploader
@@ -114,10 +118,10 @@ class PhotoprismUploader {
 
       if (files.length > 1) {
         photoprismModel.photoprismLoadingScreen
-            .showLoadingScreen('Uploading photos..');
+            .showLoadingScreen(loadingScreenS.uploadingPhotos);
       } else {
         photoprismModel.photoprismLoadingScreen
-            .showLoadingScreen('Uploading photo..');
+            .showLoadingScreen(loadingScreenS.uploadingPhoto);
       }
 
       final Random rng = Random.secure();
@@ -134,26 +138,28 @@ class PhotoprismUploader {
         print('Manual upload successful.');
         print('Importing photos..');
         photoprismModel.photoprismLoadingScreen
-            .updateLoadingScreen('Importing photos..');
+            .updateLoadingScreen(loadingScreenS.importingPhotos);
         final int status = await Api.importPhotoEvent(photoprismModel, event);
 
         if (status == 0) {
           await PhotoManager.loadMomentsTime(context, forceReload: true);
           await photoprismModel.photoprismLoadingScreen.hideLoadingScreen();
           photoprismModel.photoprismMessage
-              .showMessage('Uploading and importing successful.');
+              .showMessage(loadingScreenS.uploadingAndImportingSuccessful);
         } else if (status == 3) {
           await photoprismModel.photoprismLoadingScreen.hideLoadingScreen();
           photoprismModel.photoprismMessage
-              .showMessage('Photo already imported or import failed.');
+              .showMessage(loadingScreenS.photoAlreadyImportedOrImportFailed);
         } else {
           await photoprismModel.photoprismLoadingScreen.hideLoadingScreen();
-          photoprismModel.photoprismMessage.showMessage('Importing failed.');
+          photoprismModel.photoprismMessage
+              .showMessage(loadingScreenS.importingFailed);
         }
       } else {
         print('Manual upload failed.');
         await photoprismModel.photoprismLoadingScreen.hideLoadingScreen();
-        photoprismModel.photoprismMessage.showMessage('Manual upload failed.');
+        photoprismModel.photoprismMessage
+            .showMessage(loadingScreenS.manualUploadFailed);
       }
     }
   }

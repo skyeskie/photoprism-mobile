@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:photoprism/api/api.dart';
 import 'package:photoprism/common/album_manager.dart';
 import 'package:photoprism/common/hexcolor.dart';
+import 'package:photoprism/generated/l10n.dart';
 import 'package:photoprism/model/photoprism_model.dart';
 import 'package:photoprism/pages/album_detail_view.dart';
 import 'package:provider/provider.dart';
@@ -26,12 +27,13 @@ class AlbumsPage extends StatelessWidget {
 
   Future<void> createAlbum(BuildContext context) async {
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
-    model.photoprismLoadingScreen.showLoadingScreen('Creating album...');
-    final String uuid = await Api.createAlbum('New album', model);
+    model.photoprismLoadingScreen
+        .showLoadingScreen(S.of(context).creatingAlbum);
+    final String uuid = await Api.createAlbum(S.of(context).newAlbum, model);
 
     if (uuid == '-1') {
       await model.photoprismLoadingScreen.hideLoadingScreen();
-      model.photoprismMessage.showMessage('Creating album failed.');
+      model.photoprismMessage.showMessage(S.of(context).creatingAlbumFailed);
     } else {
       await AlbumManager.loadAlbums(context, 0, forceReload: true);
       await model.photoprismLoadingScreen.hideLoadingScreen();
@@ -57,7 +59,7 @@ class AlbumsPage extends StatelessWidget {
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.add),
-              tooltip: 'Create album',
+              tooltip: S.of(context).createAlbum,
               onPressed: () {
                 //model.photoprismAlbumManager.createAlbum();
                 createAlbum(context);

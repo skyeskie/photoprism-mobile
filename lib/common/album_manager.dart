@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
+import 'package:photoprism/api/api.dart';
 import 'package:photoprism/common/photo_manager.dart';
 import 'package:photoprism/common/photoprism_common_helper.dart';
-import 'package:photoprism/api/api.dart';
+import 'package:photoprism/generated/l10n.dart';
 import 'package:photoprism/model/album.dart';
 import 'package:photoprism/model/photo.dart';
 import 'package:photoprism/model/photoprism_model.dart';
@@ -28,9 +29,11 @@ class AlbumManager {
   static Future<void> addPhotosToAlbum(
       BuildContext context, int albumId, List<String> photoUUIDs) async {
     final PhotoprismModel model = Provider.of<PhotoprismModel>(context);
+    final BuildContext loadingContext = model.photoprismLoadingScreen.context;
 
     print('Adding photos to album ' + model.albums[albumId].id);
-    model.photoprismLoadingScreen.showLoadingScreen('Adding photos to album..');
+    model.photoprismLoadingScreen
+        .showLoadingScreen(S.of(loadingContext).addingPhotosToAlbum);
     final int status =
         await Api.addPhotosToAlbum(model.albums[albumId].id, photoUUIDs, model);
 
@@ -40,10 +43,11 @@ class AlbumManager {
       await PhotoManager.saveAndSetPhotos(context, <int, Photo>{}, albumId);
       await model.photoprismLoadingScreen.hideLoadingScreen();
       model.photoprismMessage
-          .showMessage('Adding photos to album successfull.');
+          .showMessage(S.of(loadingContext).addingPhotosToAlbumSuccessful);
     } else {
       await model.photoprismLoadingScreen.hideLoadingScreen();
-      model.photoprismMessage.showMessage('Adding photos to album failed.');
+      model.photoprismMessage
+          .showMessage(S.of(loadingContext).addingPhotosToAlbumFailed);
     }
   }
 

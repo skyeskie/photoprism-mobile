@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:photoprism/common/hexcolor.dart';
+import 'package:photoprism/generated/l10n.dart';
+import 'package:photoprism/model/photoprism_model.dart';
 import 'package:photoprism/pages/albums_page.dart';
+import 'package:photoprism/pages/photos_page.dart';
 import 'package:photoprism/pages/settings_page.dart';
 import 'package:provider/provider.dart';
-import 'package:photoprism/common/hexcolor.dart';
-import 'package:photoprism/pages/photos_page.dart';
-import 'package:photoprism/model/photoprism_model.dart';
 // use this for debugging animations
 // import 'package:flutter/scheduler.dart' show timeDilation;
 
@@ -26,6 +29,14 @@ class PhotoprismApp extends StatelessWidget {
         HexColor(Provider.of<PhotoprismModel>(context).applicationColor);
 
     return MaterialApp(
+      // ignore: always_specify_types
+      localizationsDelegates: [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
       title: 'PhotoPrism',
       theme: ThemeData(
         primaryColor: applicationColor,
@@ -74,18 +85,18 @@ class MainPage extends StatelessWidget {
           ],
           physics: const NeverScrollableScrollPhysics()),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.photo),
-            title: Text('Photos'),
+            icon: const Icon(Icons.photo),
+            title: Text(S.of(context).photos),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.photo_album),
-            title: Text('Albums'),
+            icon: const Icon(Icons.photo_album),
+            title: Text(S.of(context).albums),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            title: Text('Settings'),
+            icon: const Icon(Icons.settings),
+            title: Text(S.of(context).settings),
           ),
         ],
         currentIndex: model.selectedPageIndex,
