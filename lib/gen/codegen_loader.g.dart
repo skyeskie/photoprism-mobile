@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_single_quotes, always_specify_types
+// NOTE: using this since excludes seems broken https://github.com/dart-lang/linter/issues/165
 // DO NOT EDIT. This is code generated via package:easy_localization/generate.dart
 import 'dart:ui';
 

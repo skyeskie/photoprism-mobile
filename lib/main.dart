@@ -24,7 +24,7 @@ void main() {
       Locale('nl'),
       Locale('ru'),
     ],
-    assetLoader: CodegenLoader,
+    assetLoader: const CodegenLoader(),
     path: 'assets/lang',
   ));
 }
@@ -34,6 +34,9 @@ class PhotoprismApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color applicationColor =
         HexColor(Provider.of<PhotoprismModel>(context).applicationColor);
+
+    //Can force locale with following
+    //context.locale = const Locale('de');
 
     return MaterialApp(
       title: 'PhotoPrism',
